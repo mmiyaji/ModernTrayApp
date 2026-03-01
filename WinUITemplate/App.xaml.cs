@@ -1,9 +1,7 @@
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Dispatching;
+using Microsoft.UI.Windowing;
 using WinUITemplate.Helpers;
 using WinUITemplate.Services;
-using System;
-using System.Diagnostics;
 
 namespace WinUITemplate;
 
@@ -16,13 +14,6 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
-
-        // 未処理例外をログに出力（デバッグ用）
-        this.UnhandledException += (s, e) =>
-        {
-            Debug.WriteLine($"[UnhandledException] {e.Exception}");
-            e.Handled = true; // クラッシュを防ぐ
-        };
     }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -37,56 +28,35 @@ public partial class App : Application
         if (Settings.EnableTrayIcon)
             TrayIcon.Show();
 
-        OpenMainWindow();
-    }
-
-    private static void OpenMainWindow()
-    {
         MainWindow = new MainWindow();
-        MainWindow.Closed += OnMainWindowClosed;
-        MainWindow.Activate();
-    }
 
-    private static void OnMainWindowClosed(object sender, WindowEventArgs e)
-    {
-        // Closed 中はウィンドウ操作不可のため、次フレームに遅延
-        var queue = (sender as MainWindow)?.DispatcherQueue;
-        queue?.TryEnqueue(DispatcherQueuePriority.Low, () =>
+        MainWindow.Closed += (s, e) =>
         {
             if (Settings.MinimizeToTray && Settings.EnableTrayIcon)
             {
-                // 新しいウィンドウを準備（表示はトレイから）
+                // WinUI 3 では Closed をキャンセルできないため、
+                // 閉じる前に Hide して再生成する方式を取る
+                MainWindow.AppWindow.Hide();
+                // 新しいウィンドウを用意しておく（再表示用）
                 MainWindow = new MainWindow();
-                MainWindow.Closed += OnMainWindowClosed;
             }
             else
             {
                 ExitApp();
             }
-        });
+        };
+
+        MainWindow.Activate();
     }
 
     public static void ShowMainWindow()
     {
         if (MainWindow is null)
-        {
             MainWindow = new MainWindow();
-            MainWindow.Closed += OnMainWindowClosed;
-        }
 
-        try
-        {
-            MainWindow.AppWindow.Show();
-            MainWindow.Activate();
-            WindowHelper.BringToForeground(MainWindow);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"[ShowMainWindow] {ex.Message} - 再生成します");
-            MainWindow = new MainWindow();
-            MainWindow.Closed += OnMainWindowClosed;
-            MainWindow.Activate();
-        }
+        MainWindow.AppWindow.Show();
+        MainWindow.Activate();
+        WindowHelper.BringToForeground(MainWindow);
     }
 
     public static void ApplyTheme(AppTheme theme)
