@@ -49,7 +49,7 @@
             <!-- ヘッダー: 左マージンをコンテンツの Padding(24) に合わせる -->
             <NavigationView.Header>
                 <TextBlock x:Name="PageTitle"
-                           Margin="12,4,0,0"
+                           Margin="0,4,0,0"
                            Style="{StaticResource SubtitleTextBlockStyle}"/>
             </NavigationView.Header>
 
