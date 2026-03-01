@@ -21,7 +21,7 @@ public sealed partial class HomePage : Page
     public HomePage()
     {
         this.InitializeComponent();
-        this.Loaded += (s, e) => RebuildGrid(RootPanel.ActualWidth);
+        this.Loaded += (s, e) => RebuildGrid(CardGrid.ActualWidth);
     }
 
     private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -52,29 +52,26 @@ public sealed partial class HomePage : Page
 
         for (int i = 0; i < _cards.Count; i++)
         {
-            int col = i % columns;
-            int row = i / columns;
             var card = CreateCard(_cards[i]);
-            Grid.SetColumn(card, col);
-            Grid.SetRow(card, row);
+            Grid.SetColumn(card, i % columns);
+            Grid.SetRow(card, i / columns);
             CardGrid.Children.Add(card);
         }
     }
 
-    // –ß‚è’l‚ð FrameworkElement ‚É•ÏX
     private static FrameworkElement CreateCard(CardItem item)
     {
         var border = new Border
         {
             Style = (Style)Application.Current.Resources["CardBorderStyle"],
-            MinHeight = 140,
+            MinHeight = 120,
         };
         var panel = new StackPanel { Padding = new Thickness(16), Spacing = 8 };
-        panel.Children.Add(new FontIcon { FontSize = 32, Glyph = "\uE710" });
+        panel.Children.Add(new FontIcon { FontSize = 28, Glyph = "\uE710" });
         panel.Children.Add(new TextBlock
         {
             Text = item.Title,
-            Style = (Style)Application.Current.Resources["SubtitleTextBlockStyle"]
+            Style = (Style)Application.Current.Resources["BodyStrongTextBlockStyle"]
         });
         panel.Children.Add(new TextBlock
         {

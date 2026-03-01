@@ -5,39 +5,34 @@
     Title="WinUI Template App">
 
     <Grid>
-        <!-- カスタムタイトルバー領域 -->
+        <!-- カスタムタイトルバー -->
         <Grid x:Name="AppTitleBar"
               Height="48"
               VerticalAlignment="Top"
               Canvas.ZIndex="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0"
-                        Orientation="Horizontal"
+            <StackPanel Orientation="Horizontal"
                         Spacing="8"
                         Margin="16,0,0,0"
                         VerticalAlignment="Center">
                 <Image Source="Assets/AppIcon.png"
                        Width="16" Height="16"
                        VerticalAlignment="Center"/>
-                <TextBlock x:Name="AppTitleText"
-                           Text="WinUI Template App"
+                <TextBlock Text="WinUI Template App"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
 
         <NavigationView x:Name="NavView"
-                        PaneDisplayMode="Left"
+                        PaneDisplayMode="Auto"
                         IsSettingsVisible="True"
                         CompactModeThresholdWidth="640"
-                        ExpandedModeThresholdWidth="1008"
-                        OpenPaneLength="280"
+                        ExpandedModeThresholdWidth="860"
+                        OpenPaneLength="260"
+                        IsTitleBarAutoPaddingEnabled="False"
                         SelectionChanged="NavView_SelectionChanged"
                         Loaded="NavView_Loaded"
-                        IsTitleBarAutoPaddingEnabled="False">
+                        SizeChanged="NavView_SizeChanged">
 
             <NavigationView.MenuItems>
                 <NavigationViewItem Tag="home" Content="ホーム">
@@ -45,23 +40,23 @@
                         <FontIcon Glyph="&#xE80F;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!-- 追加ページはここに -->
             </NavigationView.MenuItems>
 
-            <!-- ペイン上部：タイトルバー分の余白 -->
             <NavigationView.PaneHeader>
                 <Grid Height="48"/>
             </NavigationView.PaneHeader>
 
-            <!-- ページタイトル -->
+            <!-- ヘッダー: 左マージンをコンテンツの Padding(24) に合わせる -->
             <NavigationView.Header>
                 <TextBlock x:Name="PageTitle"
-                           Margin="0,4,0,0"
-                           Style="{StaticResource TitleTextBlockStyle}"/>
+                           Margin="12,4,0,0"
+                           Style="{StaticResource SubtitleTextBlockStyle}"/>
             </NavigationView.Header>
 
+            <!-- コンテンツ領域: サイドバー折りたたみ時にタイトルバーと被らないよう上パディングを追加 -->
             <Frame x:Name="ContentFrame"
-                   IsNavigationStackEnabled="True"/>
+                   IsNavigationStackEnabled="True"
+                   Padding="0,8,0,0"/>
         </NavigationView>
     </Grid>
 </Window>

@@ -7,17 +7,18 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
-        <StackPanel x:Name="RootPanel" Padding="24,16,24,24" Spacing="16">
+        <Grid>
+            <StackPanel Padding="24,16,24,24" Spacing="16">
 
-            <TextBlock Text="ようこそ"
-                       Style="{StaticResource HeaderTextBlockStyle}"/>
-            <TextBlock Text="ここにアプリのメインコンテンツを配置してください。"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <!-- ページ説明文（ヘッダーは NavigationView 側の "ホーム" で済んでいるので省く） -->
+                <TextBlock Text="ここにアプリのメインコンテンツを配置してください。"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 
-            <!-- カードグリッド: Grid で手動管理 -->
-            <Grid x:Name="CardGrid" HorizontalAlignment="Stretch"/>
+                <!-- カードグリッド -->
+                <Grid x:Name="CardGrid" HorizontalAlignment="Stretch"/>
 
-        </StackPanel>
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>

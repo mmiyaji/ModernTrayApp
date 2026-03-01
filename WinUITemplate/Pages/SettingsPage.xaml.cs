@@ -18,25 +18,17 @@ public sealed partial class SettingsPage : Page
     {
         _isInitializing = true;
 
-        // テーマ
         ThemeComboBox.SelectedIndex = App.Settings.AppTheme switch
         {
             AppTheme.Light => 1,
             AppTheme.Dark => 2,
             _ => 0
         };
-
-        // 不透明度
         OpacitySlider.Value = App.Settings.WindowOpacity;
-
-        // 自動起動
         AutoStartToggle.IsOn = App.Settings.AutoStart;
-
-        // タスクトレイ
         TrayIconToggle.IsOn = App.Settings.EnableTrayIcon;
         MinimizeToTrayToggle.IsOn = App.Settings.MinimizeToTray;
 
-        // バージョン表示
         var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         VersionText.Text = $"バージョン {version?.Major}.{version?.Minor}.{version?.Build}";
 
@@ -57,7 +49,8 @@ public sealed partial class SettingsPage : Page
         App.ApplyTheme(theme);
     }
 
-    private void OpacitySlider_ValueChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    private void OpacitySlider_ValueChanged(object sender,
+        Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
         if (_isInitializing) return;
         App.Settings.WindowOpacity = (int)OpacitySlider.Value;
@@ -77,10 +70,8 @@ public sealed partial class SettingsPage : Page
         if (_isInitializing) return;
         App.Settings.EnableTrayIcon = TrayIconToggle.IsOn;
         App.Settings.Save();
-        if (TrayIconToggle.IsOn)
-            App.TrayIcon?.Show();
-        else
-            App.TrayIcon?.Hide();
+        if (TrayIconToggle.IsOn) App.TrayIcon?.Show();
+        else App.TrayIcon?.Hide();
     }
 
     private void MinimizeToTrayToggle_Toggled(object sender, RoutedEventArgs e)

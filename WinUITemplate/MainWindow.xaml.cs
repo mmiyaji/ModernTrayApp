@@ -1,4 +1,3 @@
-using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -16,57 +15,79 @@ public sealed partial class MainWindow : Window
 {
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern nint SendMessage(nint hWnd, int Msg, nint wParam, nint lParam);
-
     [DllImport("user32.dll")]
     private static extern nint LoadImage(nint hInst, string lpszName, uint uType,
         int cxDesired, int cyDesired, uint fuLoad);
 
     private const int WM_SETICON = 0x0080;
-    private const int ICON_SMALL = 0;
-    private const int ICON_BIG = 1;
-    private const uint IMAGE_ICON = 1;
-    private const uint LR_LOADFROMFILE = 0x00000010;
+    private const int ICON_SMALL = 0, ICON_BIG = 1;
+    private const uint IMAGE_ICON = 1, LR_LOADFROMFILE = 0x10;
+
+    private bool _isClosed = false;
 
     public MainWindow()
     {
         this.InitializeComponent();
 
-        // Mica バックドロップ
         TrySetMicaBackdrop();
-
-        // カスタムタイトルバー
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
-
-        // ウィンドウアイコンを設定（タスクバー・Alt+Tab に反映）
         SetWindowIcon();
 
-        // ウィンドウサイズ・位置
         AppWindow.Resize(new Windows.Graphics.SizeInt32(1100, 700));
         CenterWindow();
 
-        this.Activated += (s, e) => App.ApplyTheme(App.Settings.AppTheme);
+        this.Activated += OnActivated;
+        this.Closed += (s, e) =>
+        {
+            _isClosed = true;
+            this.Activated -= OnActivated;
+        };
+    }
+
+    private void OnActivated(object sender, WindowActivatedEventArgs e)
+    {
+        if (_isClosed) return;
+        App.ApplyTheme(App.Settings.AppTheme);
+    }
+
+    /// <summary>
+    /// ウィンドウ幅に応じてサイドバーの開閉・幅を動的に調整
+    /// </summary>
+    private void NavView_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        double width = e.NewSize.Width;
+
+        if (width < 500)
+        {
+            // 極小: オーバーレイモードで完全に隠す
+            NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.LeftMinimal;
+        }
+        else if (width < 860)
+        {
+            // 中: コンパクト（アイコンのみ）
+            NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.LeftCompact;
+        }
+        else
+        {
+            // 大: フル展開
+            NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
+            // 幅に応じてペインの幅もスケール
+            NavView.OpenPaneLength = width > 1200 ? 280 : 240;
+        }
     }
 
     private void SetWindowIcon()
     {
-        // .ico ファイルのパスを取得
         var exeDir = System.IO.Path.GetDirectoryName(Environment.ProcessPath) ?? "";
         var icoPath = System.IO.Path.Combine(exeDir, "Assets", "AppIcon.ico");
-
         if (!System.IO.File.Exists(icoPath)) return;
 
         var hwnd = WindowNative.GetWindowHandle(this);
-
-        // 大アイコン (32x32): タスクバー・Alt+Tab
-        var hIconBig = LoadImage(nint.Zero, icoPath, IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
-        if (hIconBig != nint.Zero)
-            SendMessage(hwnd, WM_SETICON, ICON_BIG, hIconBig);
-
-        // 小アイコン (16x16): タイトルバー左上
-        var hIconSmall = LoadImage(nint.Zero, icoPath, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
-        if (hIconSmall != nint.Zero)
-            SendMessage(hwnd, WM_SETICON, ICON_SMALL, hIconSmall);
+        var big = LoadImage(nint.Zero, icoPath, IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
+        if (big != nint.Zero) SendMessage(hwnd, WM_SETICON, ICON_BIG, big);
+        var small = LoadImage(nint.Zero, icoPath, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+        if (small != nint.Zero) SendMessage(hwnd, WM_SETICON, ICON_SMALL, small);
     }
 
     private void TrySetMicaBackdrop()
@@ -118,6 +139,7 @@ public sealed partial class MainWindow : Window
 
     public void BringToFront()
     {
+        if (_isClosed) return;
         AppWindow.Show();
         this.Activate();
         WindowHelper.BringToForeground(this);

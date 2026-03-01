@@ -1,7 +1,9 @@
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Windowing;
+using Microsoft.UI.Dispatching;
 using WinUITemplate.Helpers;
 using WinUITemplate.Services;
+using System;
+using System.Diagnostics;
 
 namespace WinUITemplate;
 
@@ -14,12 +16,17 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
+
+        this.UnhandledException += (s, e) =>
+        {
+            Debug.WriteLine($"[UnhandledException] {e.Exception}");
+            e.Handled = true;
+        };
     }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         Settings.Load();
-        ApplyTheme(Settings.AppTheme);
 
         TrayIcon = new TrayIconService();
         TrayIcon.ShowWindowRequested += ShowMainWindow;
@@ -28,47 +35,78 @@ public partial class App : Application
         if (Settings.EnableTrayIcon)
             TrayIcon.Show();
 
-        MainWindow = new MainWindow();
+        OpenMainWindow();
+    }
 
-        MainWindow.Closed += (s, e) =>
+    private static void OpenMainWindow()
+    {
+        MainWindow = new MainWindow();
+        MainWindow.Closed += OnMainWindowClosed;
+        MainWindow.Activate();
+    }
+
+    private static void OnMainWindowClosed(object sender, WindowEventArgs e)
+    {
+        var closedWindow = sender as MainWindow;
+        if (closedWindow is not null)
+            closedWindow.Closed -= OnMainWindowClosed;
+
+        var queue = closedWindow?.DispatcherQueue;
+        queue?.TryEnqueue(DispatcherQueuePriority.Low, () =>
         {
             if (Settings.MinimizeToTray && Settings.EnableTrayIcon)
             {
-                // WinUI 3 では Closed をキャンセルできないため、
-                // 閉じる前に Hide して再生成する方式を取る
-                MainWindow.AppWindow.Hide();
-                // 新しいウィンドウを用意しておく（再表示用）
                 MainWindow = new MainWindow();
+                MainWindow.Closed += OnMainWindowClosed;
+                // トレイから表示するまで Activate しない
             }
             else
             {
                 ExitApp();
             }
-        };
-
-        MainWindow.Activate();
+        });
     }
 
     public static void ShowMainWindow()
     {
         if (MainWindow is null)
+        {
             MainWindow = new MainWindow();
+            MainWindow.Closed += OnMainWindowClosed;
+        }
 
-        MainWindow.AppWindow.Show();
-        MainWindow.Activate();
-        WindowHelper.BringToForeground(MainWindow);
+        try
+        {
+            MainWindow.AppWindow.Show();
+            MainWindow.Activate();
+            WindowHelper.BringToForeground(MainWindow);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[ShowMainWindow] 再生成: {ex.Message}");
+            MainWindow = new MainWindow();
+            MainWindow.Closed += OnMainWindowClosed;
+            MainWindow.Activate();
+        }
     }
 
     public static void ApplyTheme(AppTheme theme)
     {
-        if (MainWindow?.Content is FrameworkElement root)
+        try
         {
-            root.RequestedTheme = theme switch
+            if (MainWindow?.Content is FrameworkElement root)
             {
-                AppTheme.Light => ElementTheme.Light,
-                AppTheme.Dark => ElementTheme.Dark,
-                _ => ElementTheme.Default
-            };
+                root.RequestedTheme = theme switch
+                {
+                    AppTheme.Light => ElementTheme.Light,
+                    AppTheme.Dark => ElementTheme.Dark,
+                    _ => ElementTheme.Default
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[ApplyTheme] スキップ: {ex.Message}");
         }
     }
 

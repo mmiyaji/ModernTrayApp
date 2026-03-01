@@ -6,156 +6,155 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Padding="24,16,24,24"
-                    Spacing="8"
-                    HorizontalAlignment="Stretch">
 
-            <!-- 表示設定 -->
-            <TextBlock Text="表示設定"
-                       Style="{StaticResource SubtitleTextBlockStyle}"
-                       Margin="0,0,0,4"/>
+        <!-- ViewportWidth に追従させるため ScrollViewer 直下に Grid を置く -->
+        <Grid>
+            <StackPanel Padding="24,16,24,24"
+                        Spacing="8"
+                        HorizontalAlignment="Stretch">
 
-            <Border Style="{StaticResource CardBorderStyle}">
-                <StackPanel>
-                    <!-- テーマ選択 -->
-                    <Grid Padding="16" MinHeight="64">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="アプリのテーマ" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="ライト・ダーク・システムに合わせるを選択できます"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                        <ComboBox x:Name="ThemeComboBox"
-                                  Grid.Column="1"
-                                  Width="200"
-                                  VerticalAlignment="Center"
-                                  SelectionChanged="ThemeComboBox_SelectionChanged">
-                            <ComboBoxItem Tag="System" Content="システムに合わせる"/>
-                            <ComboBoxItem Tag="Light" Content="ライト"/>
-                            <ComboBoxItem Tag="Dark" Content="ダーク"/>
-                        </ComboBox>
-                    </Grid>
+                <!-- 表示設定 -->
+                <TextBlock Text="表示設定"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Margin="0,0,0,4"/>
 
-                    <MenuFlyoutSeparator/>
-
-                    <!-- ウィンドウ不透明度 -->
-                    <Grid Padding="16" MinHeight="64">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="200"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="背景の透明度" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="ウィンドウの背景透明度を調整します"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                        <Slider x:Name="OpacitySlider"
-                                Grid.Column="1"
-                                Minimum="50" Maximum="100"
-                                TickFrequency="5"
-                                VerticalAlignment="Center"
-                                ValueChanged="OpacitySlider_ValueChanged"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- 起動・常駐設定 -->
-            <TextBlock Text="起動・常駐設定"
-                       Style="{StaticResource SubtitleTextBlockStyle}"
-                       Margin="0,16,0,4"/>
-
-            <Border Style="{StaticResource CardBorderStyle}">
-                <StackPanel>
-                    <!-- 自動起動 -->
-                    <Grid Padding="16" MinHeight="64">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="Windows 起動時に自動起動" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="サインイン時にアプリを自動的に起動します"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                        <ToggleSwitch x:Name="AutoStartToggle"
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel>
+                        <Grid Padding="16" MinHeight="64">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="アプリのテーマ" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                <TextBlock Text="ライト・ダーク・システムに合わせるを選択できます"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </StackPanel>
+                            <ComboBox x:Name="ThemeComboBox"
                                       Grid.Column="1"
+                                      MinWidth="180"
                                       VerticalAlignment="Center"
-                                      Margin="0"
-                                      Toggled="AutoStartToggle_Toggled"/>
-                    </Grid>
+                                      SelectionChanged="ThemeComboBox_SelectionChanged">
+                                <ComboBoxItem Tag="System" Content="システムに合わせる"/>
+                                <ComboBoxItem Tag="Light" Content="ライト"/>
+                                <ComboBoxItem Tag="Dark" Content="ダーク"/>
+                            </ComboBox>
+                        </Grid>
 
-                    <MenuFlyoutSeparator/>
+                        <MenuFlyoutSeparator/>
 
-                    <!-- タスクトレイ常駐 -->
-                    <Grid Padding="16" MinHeight="64">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="タスクトレイに常駐" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="タスクトレイにアイコンを表示します"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                        <ToggleSwitch x:Name="TrayIconToggle"
-                                      Grid.Column="1"
-                                      VerticalAlignment="Center"
-                                      Margin="0"
-                                      Toggled="TrayIconToggle_Toggled"/>
-                    </Grid>
-
-                    <MenuFlyoutSeparator/>
-
-                    <!-- 閉じるボタンでトレイに最小化 -->
-                    <Grid Padding="16" MinHeight="64">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="閉じるボタンでトレイに最小化" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="×ボタンでアプリを終了せずトレイに格納します"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                        <ToggleSwitch x:Name="MinimizeToTrayToggle"
-                                      Grid.Column="1"
-                                      VerticalAlignment="Center"
-                                      Margin="0"
-                                      IsEnabled="{x:Bind TrayIconToggle.IsOn, Mode=OneWay}"
-                                      Toggled="MinimizeToTrayToggle_Toggled"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- アプリ情報 -->
-            <TextBlock Text="アプリ情報"
-                       Style="{StaticResource SubtitleTextBlockStyle}"
-                       Margin="0,16,0,4"/>
-
-            <Border Style="{StaticResource CardBorderStyle}">
-                <Grid Padding="16" MinHeight="64">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="WinUI Template App" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock x:Name="VersionText"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <Grid Padding="16" MinHeight="64">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="背景の透明度" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                <TextBlock Text="ウィンドウの背景透明度を調整します"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </StackPanel>
+                            <Slider x:Name="OpacitySlider"
+                                    Grid.Column="1"
+                                    Minimum="50" Maximum="100"
+                                    TickFrequency="5"
+                                    VerticalAlignment="Center"
+                                    ValueChanged="OpacitySlider_ValueChanged"/>
+                        </Grid>
                     </StackPanel>
-                    <HyperlinkButton Grid.Column="1" Content="GitHub" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
+                </Border>
 
-        </StackPanel>
+                <!-- 起動・常駐設定 -->
+                <TextBlock Text="起動・常駐設定"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Margin="0,16,0,4"/>
+
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel>
+                        <Grid Padding="16" MinHeight="64">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="Windows 起動時に自動起動" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                <TextBlock Text="サインイン時にアプリを自動的に起動します"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </StackPanel>
+                            <ToggleSwitch x:Name="AutoStartToggle"
+                                          Grid.Column="1"
+                                          VerticalAlignment="Center"
+                                          Margin="0"
+                                          Toggled="AutoStartToggle_Toggled"/>
+                        </Grid>
+
+                        <MenuFlyoutSeparator/>
+
+                        <Grid Padding="16" MinHeight="64">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="タスクトレイに常駐" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                <TextBlock Text="タスクトレイにアイコンを表示します"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </StackPanel>
+                            <ToggleSwitch x:Name="TrayIconToggle"
+                                          Grid.Column="1"
+                                          VerticalAlignment="Center"
+                                          Margin="0"
+                                          Toggled="TrayIconToggle_Toggled"/>
+                        </Grid>
+
+                        <MenuFlyoutSeparator/>
+
+                        <Grid Padding="16" MinHeight="64">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="閉じるボタンでトレイに最小化" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                <TextBlock Text="×ボタンでアプリを終了せずトレイに格納します"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </StackPanel>
+                            <ToggleSwitch x:Name="MinimizeToTrayToggle"
+                                          Grid.Column="1"
+                                          VerticalAlignment="Center"
+                                          Margin="0"
+                                          IsEnabled="{x:Bind TrayIconToggle.IsOn, Mode=OneWay}"
+                                          Toggled="MinimizeToTrayToggle_Toggled"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- アプリ情報 -->
+                <TextBlock Text="アプリ情報"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Margin="0,16,0,4"/>
+
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <Grid Padding="16" MinHeight="64">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="120"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="WinUI Template App" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                            <TextBlock x:Name="VersionText"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                        <HyperlinkButton Grid.Column="1" Content="GitHub" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>
