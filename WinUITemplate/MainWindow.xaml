@@ -46,14 +46,18 @@
                 <Grid Height="48"/>
             </NavigationView.PaneHeader>
 
-            <!-- ヘッダー: 左マージンをコンテンツの Padding(24) に合わせる -->
-            <NavigationView.Header>
-                <TextBlock x:Name="PageTitle"
-                           Margin="0,4,0,0"
-                           Style="{StaticResource SubtitleTextBlockStyle}"/>
-            </NavigationView.Header>
+            <!--
+                NavigationView の Header は内部テンプレートで左に約24pxのMarginが自動付与される。
+                ネガティブマージンで打ち消し、コンテンツのPadding(24px)と揃える。
+            -->
+            <NavigationView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}"
+                               Margin="-34,4,0,0"
+                               Style="{StaticResource SubtitleTextBlockStyle}"/>
+                </DataTemplate>
+            </NavigationView.HeaderTemplate>
 
-            <!-- コンテンツ領域: サイドバー折りたたみ時にタイトルバーと被らないよう上パディングを追加 -->
             <Frame x:Name="ContentFrame"
                    IsNavigationStackEnabled="True"
                    Padding="0,8,0,0"/>

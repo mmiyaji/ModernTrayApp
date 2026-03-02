@@ -132,7 +132,7 @@ public sealed partial class MainWindow : Window
 
     private void NavigateTo(Type pageType, string title)
     {
-        PageTitle.Text = title;
+        NavView.Header = title;
         if (ContentFrame.CurrentSourcePageType != pageType)
             ContentFrame.Navigate(pageType);
     }
